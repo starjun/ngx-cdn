@@ -98,7 +98,3 @@ else
 	    return ngx.exit(500)
 	end
 end
-
-
-
-
