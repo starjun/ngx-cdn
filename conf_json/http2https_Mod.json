@@ -1,0 +1,12 @@
+[
+    {
+        "state": "on",
+        "id":"www.test.com http2https",
+        "hostname": ["www.test.com",""]
+    },
+    {
+        "state": "off",
+        "id":"www.abc1.com http2https",
+        "hostname": ["www.abc1.com",""]
+    }
+]

@@ -1,39 +1,37 @@
 
-local cjson_safe = require "cjson.safe"
-
---- balancer.json 文件绝对路径 [需要自行根据自己服务器情况设置]
-local balancer_json = "/opt/openresty/dynamic_balancer/host.json"
+local config = {}
+local stool = require "stool"
+--- host.json certs.json 文件绝对路径 [需要自行根据自己服务器情况设置]
+local base_json  = "/opt/openresty/dynamic_upstream/conf_json/base.json"
+local _path = stool.pathJoin(ngx.config.prefix(),"../dynamic_upstream/")
 
 --- 将全局配置参数存放到共享内存（*_dict）中
-local balancer_dict = ngx.shared.balancer_dict
+local config_dict = ngx.shared.config_dict
 
---- 读取文件（全部读取）
---- loadjson()调用
-local function readfile(_filepath)
-    local fd = io.open(_filepath,"r")
-    if fd == nil then return end
-    local str = fd:read("*a") --- 全部内容读取
-    fd:close()
-    return str
-end
-
---- 载入JSON文件
---- loadConfig()调用
-local function loadjson(_path_name)
-	local x = readfile(_path_name)
-	local json = cjson_safe.decode(x) or {}
-	return json
-end
-		
---- 载入config.json全局基础配置
 --- 唯一一个全局函数
 function loadConfig()
-	local tb_balancer_dict = loadjson(balancer_json)
-	for i,v in pairs(tb_balancer_dict) do
-		local tmp_json = cjson_safe.encode(v)
-		balancer_dict:safe_set(i,tmp_json,0)
-		--- key 存在会覆盖 lru算法关闭
-	end
+    config.base = stool.loadjson(base_json)
+    if config.base.jsonPath == nil then
+        stool.writefile(_path.."error.log",ngx.localtime().." init: base.json error\n")
+    end
+    local _basedir = config.base.jsonPath or stool.pathJoin(_path,"conf_json/")
+    -- SETP -1 http2https
+    config.http2https_Mod = stool.loadjson(_basedir .. "http2https_Mod.json")
+
+    config_dict:safe_set("config",stool.tableTojsonStr(config),0)
+    config_dict:safe_set("config_version",0,0)
+
+    local dynamic_host = stool.loadjson(stool.pathJoin(_basedir,"dynamic_host.json"))
+    -- todo 对 dynamic_host 进行检查
+    config_dict:safe_set("dynamic_host" , stool.tableTojsonStr(dynamic_host) , 0)
+    config_dict:safe_set("dynamic_host_version" , 0 , 0)
+
+    local dynamic_certs = stool.loadjson(stool.pathJoin(_basedir,"dynamic_certs.json"))
+    config_dict:safe_set("dynamic_certs" , stool.tableTojsonStr(dynamic_certs) , 0)
+    config_dict:safe_set("dynamic_certs_version" , 0 , 0)
+
+    config_dict:safe_set("fail_host" , "{}" , 0)
+    config_dict:safe_set("fail_host_version" , 0 , 0)
 end
 
 loadConfig()

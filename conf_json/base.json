@@ -1,0 +1,15 @@
+
+{
+
+    "debug_Mod" : false,
+
+    "appid":"CHJ-DYNAMEIC",
+    "jwt_key":"aaaaaaadddddddddfffffffffff444444tttttttt",
+
+    "baseDir" : "/opt/openresty/dynamic_upstream/",
+
+    "jsonPath":"/opt/openresty/dynamic_upstream/conf_json/",
+
+    "logPath" : "/opt/openresty/dynamic_upstream/logs/"
+
+}

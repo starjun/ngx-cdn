@@ -1,100 +1,100 @@
 
 
-local host = ngx.unescape_uri(ngx.var.http_host)
 
+local random = require "resty.resty-random"
 local balancer = require "ngx.balancer"
-local cjson_safe = require "cjson.safe"
-local optl = require("optl")
-
-
-local up_host, up_port
-
+local modcache = require "modcache"
+local stool = require("stool")
+local table_remove = table.remove
+local table_insert = table.insert
+local ngx_var = ngx.var
 local balancer_dict = ngx.shared.balancer_dict
-local tb_host = cjson_safe.decode(balancer_dict:get(host)) or {}
+local unescape_uri = ngx.unescape_uri
+local host = unescape_uri(ngx_var.http_host)
 
--- 调用前 确定_tb_host是一个table
-local function load_balancer(_tb_host)
-	local cnt = table.maxn(_tb_host.bal_list)
-	local re = {}
+local tb_host = modcache.keys.dynamic_host.cache[host]
 
-	if _tb_host.mode == nil or _tb_host.mode == "polling" then
-
-		local polling_cnt = balancer_dict:get(host.."polling_S")
-		if polling_cnt == nil then
-			polling_cnt = 1
-		else
-			polling_cnt = polling_cnt +1
-			if polling_cnt > cnt then
-				polling_cnt = 1
-			end
-		end
-		balancer_dict:safe_set(host.."polling_S",polling_cnt,0)
-		re = _tb_host.bal_list[polling_cnt]
-
-	elseif _tb_host.mode == "ip_hash" then
-
-        local remote_ip = ngx.var.remote_addr
-        local hash = ngx.crc32_long(remote_ip);  
-        hash = (hash % cnt) + 1  
-        re = _tb_host.bal_list[hash]
-
-	elseif _tb_host.mode == "url_hash" then
-
-		local url = ngx.unescape_uri(ngx.var.uri)
-        local hash = ngx.crc32_long(url);  
-        hash = (hash % cnt) + 1  
-        re = _tb_host.bal_list[hash]
-
-	elseif _tb_host.mode == "random" then
-
-		math.randomseed(tostring(ngx.now()):reverse():sub(1, 7))
-		-- 暂时没有用 lib 中的更强的随机函数	
-    	re = _tb_host.bal_list[math.random(1,cnt)]
-
-    elseif _tb_host.mode == "weight.polling" then
-
-    	local tmplist = {}
-    	local weight = 0
-    	for i,v in ipairs(_tb_host.bal_list) do
-    		 weight = weight + _tb_host.bal_list[i][3]
-    	end
-
-    	for i=1,weight do
-    		for j,v in ipairs(_tb_host.bal_list) do
-    			if _tb_host.bal_list[j][3] >0 then
-    				table.insert(tmplist, {_tb_host.bal_list[j][1],_tb_host.bal_list[j][2]})
-    				_tb_host.bal_list[j][3] = _tb_host.bal_list[j][3] -1
-    			end
-    		end
-    	end
-
-    	local polling_weight= balancer_dict:get(host.."weight.polling")
-		if polling_weight == nil then
-			polling_weight = 1
-		else
-			polling_weight = polling_weight +1
-			if polling_weight > weight then
-				polling_weight = 1
-			end
-		end
-		balancer_dict:safe_set(host.."weight.polling",polling_weight,0)
-		re = tmplist[polling_weight]
-
-	end
-	re[2] = re[2] or 80
-	return re[1],re[2]
+if not tb_host then
+    ngx.log(ngx.ERR, "http_host is nil")
+    return ngx.exit(403)
 end
 
-if tb_host.bal_list == nil or table.maxn(tb_host.bal_list) == 0 then
-	ngx.log(ngx.ERR, "failed to set the current peer:", err)
-	return ngx.exit(500)
+local function load_balancer(_tb_host)
+  -- 源站异常排除
+  local fail_host = modcache.keys.fail_host.cache
+  local array = _tb_host.bal_list
+  for i=#array,1,-1 do
+    local ip_port = array[i][1]..(array[i][2] or 80)
+    if fail_host[ip_port] then
+      table_remove(array, i)
+    end
+  end
+  local cnt = #array
+  local re = {}
+
+  if _tb_host.mode == nil or _tb_host.mode == "polling" then
+
+    local polling_cnt = balancer_dict:get(host.."polling_S")
+    if polling_cnt == nil then
+       polling_cnt = 1
+    else
+       polling_cnt = polling_cnt +1
+       if polling_cnt > cnt then
+          polling_cnt = 1
+       end
+    end
+    balancer_dict:safe_set(host.."polling_S",polling_cnt,0)
+    re = array[polling_cnt]
+
+  elseif _tb_host.mode == "ip_hash" then
+
+      local remote_ip = ngx_var.remote_addr
+      local hash = ngx.crc32_long(remote_ip);
+      hash = (hash % cnt) + 1
+      re = array[hash]
+
+  elseif _tb_host.mode == "url_hash" then
+
+    local url = ngx.unescape_uri(ngx_var.uri)
+      local hash = ngx.crc32_long(url);
+      hash = (hash % cnt) + 1
+      re = array[hash]
+
+  elseif _tb_host.mode == "random" then
+    local r = random.number(1, cnt)
+    re = array[r]
+
+  elseif _tb_host.mode == "weight.polling" then
+    local weight_list = {}
+    for i,v in ipairs(array) do
+      local tmp_c = v[3] or 1
+      if v[3] > 10 then
+        tmp_c = 9
+      end
+      for ii=1,tmp_c do
+        table_insert(weight_list,array[i])
+      end
+    end
+    local r = random.number(1, #weight_list)
+    re = weight_list[r]
+  end
+  re[2] = re[2] or 80
+  return re[1],re[2]
+end
+
+
+if tb_host.bal_list == nil or #tb_host.bal_list == 0 then
+    ngx.log(ngx.ERR, "failed to set the current peer:", err)
+    return ngx.exit(500)
 else
-	up_host, up_port = load_balancer(tb_host)
-	--optl.writefile("/opt/openresty/dynamic_balancer/logs/1.log",up_host..":"..up_port)
-	if up_host == nil then return ngx.exit(500) end
-	local ok, err = balancer.set_current_peer(up_host, up_port)
-	if not ok then
-	    ngx.log(ngx.ERR, "failed to set the current peer:", err)
-	    return ngx.exit(500)
-	end
+    local up_host, up_port = load_balancer(tb_host)
+    if up_host == nil then
+        ngx.log(ngx.ERR, "load_balancer error: host is nil")
+        return ngx.exit(500)
+    end
+    local ok, err = balancer.set_current_peer(up_host, up_port)
+    if not ok then
+          ngx.log(ngx.ERR, "failed to set the current peer:", err)
+          return ngx.exit(500)
+    end
 end
