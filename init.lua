@@ -1,6 +1,9 @@
 
 local config = {}
 local stool = require "stool"
+require "resty.core"
+collectgarbage("collect")
+
 --- host.json certs.json 文件绝对路径 [需要自行根据自己服务器情况设置]
 local base_json  = "/opt/openresty/dynamic_upstream/conf_json/base.json"
 local _path = stool.pathJoin(ngx.config.prefix(),"../dynamic_upstream/")

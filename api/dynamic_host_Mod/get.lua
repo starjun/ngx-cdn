@@ -1,11 +1,12 @@
-
--- 动态域名查询
+-- 动态域名 查询
 local stool = require "stool"
 local optl  = require "optl"
-local _host = optl.get_paramByName("host")
-local config_dict = ngx.shared["config_dict"]
 
-local _tb = stool.tableTojsonStr(config_dict:get("dynamic_host")) or {}
+local config_dict = ngx.shared["config_dict"]
+local dict_key_name = "dynamic_host"
+local _tb = stool.stringTojson(config_dict:get(dict_key_name)) or {}
+
+local _host = optl.get_paramByName("host")
 if _host == "" then
     local _tb_host_name = {}
     for k,v in pairs(_tb) do

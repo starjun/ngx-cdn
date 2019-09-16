@@ -13,7 +13,8 @@ openresty_uri=https://openresty.org/download/openresty-${install_version}.tar.gz
 # centos 6 = remi-release-6.rpm ; centos 7 = remi-release-7.rpm
 rpm_uri=http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 
-purge=http://labs.frickle.com/files/ngx_cache_purge-2.3.tar.gz
+purge_version=2.3
+purge_uri=http://labs.frickle.com/files/ngx_cache_purge-${purge_version}.tar.gz
 
 function YUM_start(){
     yum install -y htop goaccess dos2unix epel-release
@@ -31,12 +32,12 @@ function openresty(){
     wget ${openresty_uri}
     tar zxvf openresty-${install_version}.tar.gz
 
-    wget ${purge}
-    tar zxvf ngx_cache_purge-2.3.tar.gz
+    wget ${purge_uri}
+    tar zxvf ngx_cache_purge-${purge_version}.tar.gz
 
     cd ${build_path}/openresty-${install_version}
     ./configure --prefix=${install_path} --with-http_realip_module --with-http_v2_module --with-http_stub_status_module\
-                --add-module=./../ngx_cache_purge-2.3
+                --add-module=./../ngx_cache_purge-${purge_version}
     gmake
     gmake install
 
@@ -72,8 +73,8 @@ function check(){
     chown root:nobody ${install_path}/nginx/sbin/nginx
     chmod 751 ${install_path}/nginx/sbin/nginx
     chmod u+s ${install_path}/nginx/sbin/nginx
-    ln -sf ${install_path}/secplus/conf/nginx.conf ${install_path}/nginx/conf/nginx.conf
-    ln -sf ${install_path}/secplus/conf/secplus.conf ${install_path}/nginx/conf/secplus.conf
+    ln -sf ${install_path}/dynamic_upstream/conf/nginx.conf ${install_path}/nginx/conf/nginx.conf
+    ln -sf ${install_path}/dynamic_upstream/conf/backend_demo.conf ${install_path}/nginx/conf/backend_demo.conf
     cd ${install_path}/nginx/html && (ls |grep "favicon.ico" || wget https://www.nginx.org/favicon.ico)
     cat /etc/profile |grep "openresty" ||(echo "PATH=${install_path}/nginx/sbin:\$PATH" >> /etc/profile && export PATH)
     echo "check Done~!"
