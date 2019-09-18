@@ -1,0 +1,13 @@
+[
+    {
+        "state": "on",
+        "id":"1 cache static file",
+        "hostname": ["*",""],
+        "uri":[[".css",".js",".flv",".swf",".woff",
+                 ".txt",".ttf",".svg",".eot",
+                 ".gif",".jpg",".png",".jpeg",".bmp",".ico",".webp"
+               ],
+            "reend_list"
+        ]
+    }
+]

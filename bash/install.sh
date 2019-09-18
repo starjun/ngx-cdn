@@ -29,9 +29,11 @@ function openresty(){
     mkdir -p ${build_path}
     #############################
     cd ${build_path}
+    rm -rf openresty-${install_version}.tar.gz
     wget ${openresty_uri}
     tar zxvf openresty-${install_version}.tar.gz
 
+    rm -rf ngx_cache_purge-${purge_version}.tar.gz
     wget ${purge_uri}
     tar zxvf ngx_cache_purge-${purge_version}.tar.gz
 

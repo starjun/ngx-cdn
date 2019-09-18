@@ -10,16 +10,6 @@ keys["config"]    = {
     dict_tag = "config_version",
     _version = 0
 }
-keys["dynamic_host"]    = {
-    cache    = stool.stringTojson(config_dict:get("dynamic_host")) or {},
-    dict_tag = "dynamic_host_version",
-    _version = 0
-}
-keys["dynamic_certs"]    = {
-    cache    = stool.stringTojson(config_dict:get("dynamic_certs")) or {},
-    dict_tag = "dynamic_certs_version",
-    _version = 0
-}
 keys["fail_host"]    = {
     cache    = stool.stringTojson(config_dict:get("fail_host")) or {},
     dict_tag = "fail_host_version",

@@ -18,20 +18,20 @@ function loadConfig()
         stool.writefile(_path.."error.log",ngx.localtime().." init: base.json error\n")
     end
     local _basedir = config.base.jsonPath or stool.pathJoin(_path,"conf_json/")
-    -- SETP -1 http2https
-    config.http2https_Mod = stool.loadjson(_basedir .. "http2https_Mod.json")
+    -- http2https_Mod
+    config.http2https_Mod    = stool.loadjson(_basedir .. "http2https_Mod.json")
+
+    -- dynamic_host_Mod
+    config.dynamic_host_Mod  = stool.loadjson(_basedir .. "dynamic_host_Mod.json")
+
+    -- dynamic_certs_Mod
+    config.dynamic_certs_Mod = stool.loadjson(_basedir .. "dynamic_certs_Mod.json")
+
+    -- proxy_cache_Mod
+    config.proxy_cache_Mod   = stool.loadjson(_basedir .. "proxy_cache_Mod.json")
 
     config_dict:safe_set("config",stool.tableTojsonStr(config),0)
     config_dict:safe_set("config_version",0,0)
-
-    local dynamic_host = stool.loadjson(stool.pathJoin(_basedir,"dynamic_host.json"))
-    -- todo 对 dynamic_host 进行检查
-    config_dict:safe_set("dynamic_host" , stool.tableTojsonStr(dynamic_host) , 0)
-    config_dict:safe_set("dynamic_host_version" , 0 , 0)
-
-    local dynamic_certs = stool.loadjson(stool.pathJoin(_basedir,"dynamic_certs.json"))
-    config_dict:safe_set("dynamic_certs" , stool.tableTojsonStr(dynamic_certs) , 0)
-    config_dict:safe_set("dynamic_certs_version" , 0 , 0)
 
     config_dict:safe_set("fail_host" , "{}" , 0)
     config_dict:safe_set("fail_host_version" , 0 , 0)
