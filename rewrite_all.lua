@@ -54,6 +54,6 @@ end
 -- proxy_cache_Mod 执行
 for i,v in ipairs(getDict_Config("proxy_cache_Mod")) do
     if v.state == "on" and host_uri_remath(v.hostname , v.uri) then
-        ngx_var.p_cache = 1
+        ngx_var.p_cache = 0
     end
 end
