@@ -4,8 +4,9 @@ local optl  = require "optl"
 
 local config_dict = ngx.shared["config_dict"]
 local dict_key_name = "config"
+local tb_key_name = "dynamic_certs_Mod"
 local config = stool.stringTojson(config_dict:get(dict_key_name)) or {}
-local _tb = config.dynamic_certs_Mod
+local _tb = config[tb_key_name]
 
 local _host = optl.get_paramByName("host")
 if _host == "" then
