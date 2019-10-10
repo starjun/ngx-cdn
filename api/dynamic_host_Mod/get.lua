@@ -1,4 +1,9 @@
 -- 动态域名 查询
+
+-- host = "" 查询所有域名名称
+-- host = all_hsot 查询所有动态域名信息
+-- host = %name% 查询指定域名信息
+
 local stool = require "stool"
 local optl  = require "optl"
 

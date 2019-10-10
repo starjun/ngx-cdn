@@ -1,4 +1,6 @@
 -- 动态域名 修改
+-- 仅允许修改指定 host 的整体内容
+
 local stool = require "stool"
 local optl  = require "optl"
 local modcache = require("modcache")
@@ -45,7 +47,7 @@ if _tb[_host] then
     local tb = stool.stringTojson(_value)
     if type(tb) ~= "table" then
         -- value 转 json 失败
-        optl.sayHtml_ext({code="error",msg="value is error"})
+        optl.sayHtml_ext({code="error",msg="value Tojson error"})
     else
         local re,err = check_value(tb)
         if not re then
@@ -58,9 +60,9 @@ if _tb[_host] then
         end
         -- 更新 dict version 标记
         modcache.dict_tag_up(dict_key_name)
-        optl.sayHtml_ext({ code = "ok", msg = "add "..dict_key_name.." success" })
+        optl.sayHtml_ext({ code = "ok", msg = "add host success" })
     end
 else
     -- 对应 host key 证书 不存在
-    optl.sayHtml_ext({code="error",msg="host is error"})
+    optl.sayHtml_ext({code="error",msg="host is Non-existent"})
 end

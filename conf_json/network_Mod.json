@@ -1,0 +1,9 @@
+[
+    {
+        "state": "on",
+        "id":"2-ip_cc",
+        "network":{"maxReqs":5000,"pTime":10,"blackTime":120},
+        "hostname": ["*",""],
+        "uri": ["*",""]
+    }
+]
