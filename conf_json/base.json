@@ -3,8 +3,20 @@
 
     "debug_Mod" : false,
 
-    "appid":"CHJ-DYNAMEIC",
-    "jwt_key":"aaaaaaadddddddddfffffffffff444444tttttttt",
+    "jwt_Mod":{
+        "state":"off",
+        "appid":"hash(appid) 标记该server唯一标识的ID",
+        "description":"对该server的描述～",
+        "hmac":"aaaaaaadddddddddfffffffffff444444tttttttt",
+        "header_name":"zj_jwt_token",
+        "appList":{
+            "CDN_master_appid":{
+                "rule":"角色暂时没有用",
+                "ext1":"bbb",
+                "ext2":"ccc"
+            }
+        }
+    },
 
     "baseDir" : "/opt/openresty/dynamic_upstream/",
 

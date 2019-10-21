@@ -65,5 +65,10 @@ dynamic_certs.json
 }
 ```
 
-**感谢**
-https://github.com/mtourne/ngx_lua_ssl
+# 关于
+
+- 强调下，感谢春哥，https://github.com/mtourne/ngx_lua_ssl ！！！
+- 关于我：从事安全、架构相关工作。
+- Copyright and License
+GPL（GNU General Public License）
+Copyright (C) 2011-2016, by zj
