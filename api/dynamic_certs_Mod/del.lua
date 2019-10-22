@@ -7,14 +7,16 @@ local modcache = require("modcache")
 local config_dict = ngx.shared["config_dict"]
 local dict_key_name = "config"
 local tb_key_name = "dynamic_certs_Mod"
-local config = stool.stringTojson(config_dict:get(dict_key_name)) or {}
-local _tb = config[tb_key_name]
+local config = stool.stringTojson(config_dict:get(dict_key_name))
+if not config then
+    optl.sayHtml_ext({ code = "error", msg = "config_dict:config is error" })
+end
 
 local _certs_key = optl.get_paramByName("certs_key")
 
-if _tb[_certs_key] then
-    _tb[_certs_key] = nil
-    local re = config_dict:replace(dict_key_name , stool.tableTojsonStr(_tb))
+if config[tb_key_name][_certs_key] then
+    config[tb_key_name][_certs_key] = nil
+    local re = config_dict:replace(dict_key_name , stool.tableTojsonStr(config))
     if not re then
         optl.sayHtml_ext({ code = "error", msg = "error in set while replacing" })
     end

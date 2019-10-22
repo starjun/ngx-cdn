@@ -10,18 +10,23 @@ local optl  = require "optl"
 local config_dict = ngx.shared["config_dict"]
 local dict_key_name = "config"
 local tb_key_name = "dynamic_host_Mod"
-local config = stool.stringTojson(config_dict:get(dict_key_name)) or {}
-local _tb = config[tb_key_name]
+local config = stool.stringTojson(config_dict:get(dict_key_name))
+if not config then
+    optl.sayHtml_ext({ code = "error", msg = "config_dict:config is error" })
+end
+
 
 local _host = optl.get_paramByName("host")
+
+
 if _host == "" then
-    local _tb_host_name = {}
-    for k,v in pairs(_tb) do
-        table.insert(_tb_host_name,k)
+    local tmp = {}
+    for k,_ in pairs(config[tb_key_name]) do
+        table.insert(tmp,k)
     end
-    optl.sayHtml_ext({code="ok",msg=_tb_host_name,count=#(_tb_host_name)})
+    optl.sayHtml_ext({code="ok",msg=tmp,count=#(tmp)})
 elseif _host == "all_host" then
-    optl.sayHtml_ext({code="ok",msg=_tb})
+    optl.sayHtml_ext({code="ok",msg=config[tb_key_name]})
 else
-    optl.sayHtml_ext({code="ok",msg=_tb[_host]})
+    optl.sayHtml_ext({code="ok",msg=config[tb_key_name][_host]})
 end

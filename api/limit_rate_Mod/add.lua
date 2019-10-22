@@ -6,8 +6,10 @@ local modcache = require("modcache")
 local config_dict = ngx.shared["config_dict"]
 local dict_key_name = "config"
 local tb_key_name = "limit_rate_Mod"
-local config = stool.stringTojson(config_dict:get(dict_key_name)) or {}
-local _tb = config[tb_key_name]
+local config = stool.stringTojson(config_dict:get(dict_key_name))
+if not config then
+    optl.sayHtml_ext({ code = "error", msg = "config_dict:config is error" })
+end
 
 local _value = optl.get_paramByName("value")
 -- {
@@ -18,13 +20,13 @@ local _value = optl.get_paramByName("value")
 --     "uri":[["down","static"],"rein_list"]
 -- }
 
-local tb = stool.stringTojson(_value)
-if type(tb) ~= "table" then
+_value = stool.stringTojson(_value)
+if type(_value) ~= "table" then
     -- value 转 json 失败
     optl.sayHtml_ext({code="error",msg="value Tojson error"})
 else
-    table.insert(_tb, tb)
-    local re = config_dict:replace(dict_key_name , stool.tableTojsonStr(_tb))
+    table.insert(config[tb_key_name], _value)
+    local re = config_dict:replace(dict_key_name , stool.tableTojsonStr(config))
     if not re then
         optl.sayHtml_ext({ code = "error", msg = "error in set while replacing" })
     end

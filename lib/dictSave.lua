@@ -70,10 +70,10 @@ local function ip_dict_save(_config_base)
     local re,err
     re , err = stool.writefile(_config_base.jsonPath .. "ip/allow" .. fileEnd , table_concat(allowIp , "\n") , "w+")
     re , err = stool.writefile(_config_base.jsonPath .. "ip/deny" .. fileEnd , table_concat(denyIp , "\n") , "w+")
-    return re
+    return re,err
 end
 
--- 一定要保证 参数 合法
+-- 一定要保证 参数 config 合法
 -- config_dict *_dict
 local function all_dict_save(config)
     local config_base = config.base

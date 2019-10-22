@@ -3,7 +3,7 @@
 --   查询：http2https_Mod  dynamic_host_Mod  dynamic_certs_Mod  proxy_cache_Mod  limit_rate_Mod  network_Mod
 
 local optl     = require("optl")
-local modcheck = require("modcheck")
+local modcache = require("modcache")
 local stool    = require("stool")
 
 local get_paramByName = optl.get_paramByName

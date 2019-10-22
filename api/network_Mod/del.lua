@@ -8,8 +8,10 @@ local modcache = require("modcache")
 local config_dict = ngx.shared["config_dict"]
 local dict_key_name = "config"
 local tb_key_name = "network_Mod"
-local config = stool.stringTojson(config_dict:get(dict_key_name)) or {}
-local _tb = config[tb_key_name]
+local config = stool.stringTojson(config_dict:get(dict_key_name))
+if not config then
+    optl.sayHtml_ext({ code = "error", msg = "config_dict:config is error" })
+end
 
 local _id = optl.get_paramByName("id")
 _id = tonumber(_id)
@@ -17,11 +19,11 @@ if not _id then
     optl.sayHtml_ext({ code = "ok", msg = "id is error" })
 end
 
-if not _tb[_id] then
+if not config[tb_key_name][_id] then
     optl.sayHtml_ext({ code = "ok", msg = "id is Non-existent" })
 else
-    table.remove(_tb , _id)
-    local re = config_dict:replace("config" , stool.tableTojsonStr(_tb))
+    table.remove(config[tb_key_name] , _id)
+    local re = config_dict:replace("config" , stool.tableTojsonStr(config))
     if not re then
         optl.sayHtml_ext({ code = "error", msg = "error in set while replacing" })
     end

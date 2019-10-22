@@ -8,14 +8,16 @@ local modcache = require("modcache")
 local config_dict = ngx.shared["config_dict"]
 local dict_key_name = "config"
 local tb_key_name = "dynamic_host_Mod"
-local config = stool.stringTojson(config_dict:get(dict_key_name)) or {}
-local _tb = config[tb_key_name]
+local config = stool.stringTojson(config_dict:get(dict_key_name))
+if not config then
+    optl.sayHtml_ext({ code = "error", msg = "config_dict:config is error" })
+end
 
 local _host = optl.get_paramByName("host")
 
-if _tb[_host] then
-    _tb[_host] = nil
-    re = config_dict:replace(dict_key_name , stool.tableTojsonStr(_tb))
+if config[tb_key_name][_host] then
+    config[tb_key_name][_host] = nil
+    local re = config_dict:replace(dict_key_name , stool.tableTojsonStr(config))
     if not re then
         optl.sayHtml_ext({ code = "error", msg = "error in set while replacing" })
     end
@@ -24,6 +26,6 @@ if _tb[_host] then
     optl.sayHtml_ext({ code = "ok", msg = "del host success" })
 
 else
-    -- 对应 host key 证书 不存在
+    -- 对应 host 域名 不存在
     optl.sayHtml_ext({code="error",msg="host is Non-existent"})
 end

@@ -9,16 +9,20 @@ local optl  = require "optl"
 local config_dict = ngx.shared["config_dict"]
 local dict_key_name = "config"
 local tb_key_name = "network_Mod"
-local config = stool.stringTojson(config_dict:get(dict_key_name)) or {}
-local _tb = config[tb_key_name]
+local config = stool.stringTojson(config_dict:get(dict_key_name))
+if not config then
+    optl.sayHtml_ext({ code = "error", msg = "config_dict:config is error" })
+end
 
 local _id = optl.get_paramByName("id")
+
+
 if _id == "" then
-    optl.sayHtml_ext({code="ok",msg=_tb})
+    optl.sayHtml_ext({code="ok",msg=config[tb_key_name]})
 else
     _id = tonumber(_id)
     if not _id then
         optl.sayHtml_ext({code="error",msg="id is error"})
     end
-    optl.sayHtml_ext({code="ok",msg=_tb[_id]})
+    optl.sayHtml_ext({code="ok",msg=config[tb_key_name][_id]})
 end
