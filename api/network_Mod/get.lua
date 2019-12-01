@@ -15,8 +15,6 @@ if not config then
 end
 
 local _id = optl.get_paramByName("id")
-
-
 if _id == "" then
     optl.sayHtml_ext({code="ok",msg=config[tb_key_name]})
 else

@@ -17,13 +17,16 @@ end
 
 local _certs_key = optl.get_paramByName("certs_key")
 
-
+local tb = config[tb_key_name]
+if type(tb) ~= "table" then
+    optl.sayHtml_ext({code="error",msg="config_dict:dynamic_certs_Mod is nil"})
+end
 if _certs_key == "" then
     local tmp = {}
     for k,_ in pairs(config[tb_key_name]) do
         table.insert(tmp,k)
     end
-    optl.sayHtml_ext({code="ok",msg=tmp,count=#tmp)
+    optl.sayHtml_ext({code="ok",msg=tmp,count=#tmp})
 elseif _certs_key == "all_certs_key" then
     local tmp = {}
     for k,v in pairs(config[tb_key_name]) do

@@ -19,7 +19,6 @@ if not _id then
     optl.sayHtml_ext({ code = "ok", msg = "id is error" })
 end
 
-
 if not config[tb_key_name][_id] then
     optl.sayHtml_ext({ code = "ok", msg = "id is Non-existent" })
 else

@@ -4,13 +4,13 @@
         "limit_rate":"100k",
         "id":"www.test.com limit_rate 100k",
         "hostname": ["www.test.com",""],
-        "uri":[["down","static"],"rein_list"]
+        "uri":[["down","static"],"uin_list"]
     },
     {
         "state": "on",
         "limit_rate":"10k",
         "id":"112.123.21.34 limit_rate 10k",
         "hostname": ["112.123.21.34",""],
-        "uri":[[".zip",".gz",".mp4"],"reend_list"]
+        "uri":[[".zip",".gz",".mp4"],"uend_list"]
     }
 ]

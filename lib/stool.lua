@@ -294,17 +294,17 @@ local function readfile(_filepath , _ty)
     if not fd then
         return
     end
-    if not _ty then
-        local str = fd:read("*a") --- 全部内容读取
-        fd:close()
-        return str
-    else
+    if _ty then
         local line_s = {}
         for line in fd:lines() do
             table_insert(line_s , line)
         end
         fd:close()
         return line_s
+    else
+        local str = fd:read("*a") --- 全部内容读取
+        fd:close()
+        return str
     end
 end
 _M.readfile = readfile
@@ -352,12 +352,12 @@ _M.loadjson = loadjson
 -- eg key = $ip ,...
 -- scheme uri remoteIp ip serverIp http_host server_name host method referer
 -- useragent cookie request_uri query_string http_content_type header_data args_data posts_data posts_all
--- args posts post_form eg:args@a [取get参数为a的值] posts@a [取普通 form post时参数为a的值]
+-- args posts headers post_form eg:args@a [取get参数为a的值] posts@a [取普通 form post时参数为a的值]
 local function get_base_msg_by_key(_basemsg,_key)
     if _key == nil then return "" end
     if stringStarts(_key,"$") then
         local real_key = string_sub(_key,2,#_key)
-        if real_key == "args" or real_key == "args" or real_key == "args" then
+        if real_key == "args" or real_key == "posts" or real_key == "headers"  or real_key == "post_form" then
             return _basemsg[real_key]
         end
         local tmp = get_keyInTable(_basemsg,real_key)

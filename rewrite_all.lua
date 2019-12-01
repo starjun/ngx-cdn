@@ -19,15 +19,15 @@ local request_uri = unescape_uri(ngx_var.request_uri)
 local uri = ngx_var.uri
 local ip  = ngx_var.remote_addr
 
+-- _modRule
+-- ["112.123.21.34",""]
+-- [[".zip",".gz",".mp4"],"uend_list"]
+-- [["down","static"],"uin_list"]
 local function remath_ext(_str , _modRule)
     if type(_modRule) ~= "table" then
         return false
     end
-    if _modRule[2] == "rein_list" or _modRule[2] == "restart_list" or _modRule[2] == "reend_list" then
-        return optl.remath_Invert(string_upper(_str) , _modRule[1] , _modRule[2] , _modRule[3])
-    else
-        return optl.remath_Invert(_str , _modRule[1] , _modRule[2] , _modRule[3])
-    end
+    return optl.remath_Invert(_str , _modRule[1] , _modRule[2] , _modRule[3])
 end
 
 --- 匹配 host 和 uri

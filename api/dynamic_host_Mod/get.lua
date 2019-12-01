@@ -15,10 +15,7 @@ if not config then
     optl.sayHtml_ext({ code = "error", msg = "config_dict:config is error" })
 end
 
-
 local _host = optl.get_paramByName("host")
-
-
 if _host == "" then
     local tmp = {}
     for k,_ in pairs(config[tb_key_name]) do

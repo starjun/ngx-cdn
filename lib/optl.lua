@@ -50,12 +50,13 @@ local function remath(_str , _re_str , _options)
                 return true
             end
         end
-    elseif _options == "restart_list" then
+    elseif _options == "ustart_list" then
         if type(_re_str) ~= "table" then
             return false
         end
+        local upper_str = string_upper(_str)
         for _ , v in ipairs(_re_str) do
-            if stool.stringStarts(_str, string_upper(v)) then
+            if stool.stringStarts(upper_str, string_upper(v)) then
                 return true
             end
         end
@@ -68,12 +69,13 @@ local function remath(_str , _re_str , _options)
                 return true
             end
         end
-    elseif _options == "reend_list" then
+    elseif _options == "uend_list" then
         if type(_re_str) ~= "table" then
             return false
         end
+        local upper_str = string_upper(_str)
         for _ , v in ipairs(_re_str) do
-            if stool.stringEnds(_str, string_upper(v)) then
+            if stool.stringEnds(upper_str, string_upper(v)) then
                 return true
             end
         end
@@ -86,12 +88,13 @@ local function remath(_str , _re_str , _options)
                 return true
             end
         end
-    elseif _options == "rein_list" then
+    elseif _options == "uin_list" then
         if type(_re_str) ~= "table" then
             return false
         end
+        local upper_str = string_upper(_str)
         for _ , v in ipairs(_re_str) do
-            if stool.stringIn(_str, string_upper(v)) then
+            if stool.stringIn(upper_str, string_upper(v)) then
                 return true
             end
         end
@@ -155,7 +158,7 @@ local function remath_Invert(_str , _re_str , _options , _Invert)
     end
 end
 
-local function sayHtml_ext(_html,_find_type,_content_type)
+local function sayHtml_ext(_html,_content_type)
     --ngx.header.content_type = "text/html"
     if _html == nil then
         _html = "_html is nil"
@@ -165,7 +168,6 @@ local function sayHtml_ext(_html,_find_type,_content_type)
     if _content_type then
         ngx.header.content_type = _content_type
     end
-
     ngx.say(_html)
     ngx.exit(200)
 end
