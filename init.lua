@@ -51,6 +51,9 @@ function loadConfig()
     -- proxy_cache_Mod
     config.proxy_cache_Mod   = stool.loadjson(_basedir .. "proxy_cache_Mod.json")
 
+    -- add_headers_Mod
+    config.add_headers_Mod   = stool.loadjson(_basedir .. "add_headers_Mod.json")
+
     -- limit_rate_Mod
     config.limit_rate_Mod    = stool.loadjson(_basedir .. "limit_rate_Mod.json")
 

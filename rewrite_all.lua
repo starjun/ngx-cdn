@@ -107,6 +107,15 @@ for i,v in ipairs(getDict_Config("proxy_cache_Mod")) do
     end
 end
 
+-- add_headers_Mod 执行
+for i,v in ipairs(getDict_Config("add_headers_Mod")) do
+    if v.state == "on" and host_uri_remath(v.hostname , v.uri) then
+        for _,vv in ipairs(v.add_headers) do
+            ngx.header[vv[1]] = vv[2]
+        end
+    end
+end
+
 -- limit_rate_Mod 执行
 for i,v in ipairs(getDict_Config("limit_rate_Mod")) do
     if v.state == "on" and host_uri_remath(v.hostname , v.uri) then

@@ -1,0 +1,12 @@
+[
+    {
+        "state": "on",
+        "id":"资源 cors",
+        "hostname": ["*",""],
+        "uri":[[".woff",".ttf",".eot",".svg"],"uend_list"],
+        "add_headers":[
+             ["Access-Control-Allow-Headers","X-ABC-TraceId,x-ABC-deviceid"],
+             ["Access-Control-Allow-Origin","*"]
+        ]
+    }
+]
