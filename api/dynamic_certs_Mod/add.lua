@@ -3,6 +3,7 @@
 local stool = require "stool"
 local optl  = require "optl"
 local modcache = require("modcache")
+local certs_Mod = require("certs_Mod")
 
 local config_dict = ngx.shared["config_dict"]
 local dict_key_name = "config"
@@ -30,7 +31,11 @@ else
         optl.sayHtml_ext({code="error",msg="value Tojson error"})
     else
         -- todo 检查证书等信息
-            -- check _value
+        local re,err = certs_Mod.ssl_save(_value,_certs_key,"Master")
+        if not re then
+            optl.sayHtml_ext({ code = "error", msg = err })
+        end
+        _value.e_time = err
         --
         config[tb_key_name][_certs_key] = _value
         local re = config_dict:replace(dict_key_name , stool.tableTojsonStr(config))

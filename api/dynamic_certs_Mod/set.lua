@@ -15,7 +15,6 @@ endl
 local _certs_key = optl.get_paramByName("certs_key")
 local _value = optl.get_paramByName("value")
 -- {
---     "e_time":"2020-09-09 19:30:00",
 --     "ssl_certificate":"base64 str",
 --     "ssl_certificate_key":"base64 str"
 -- }
@@ -26,7 +25,19 @@ if config[tb_key_name][_certs_key] then
         -- value 转 json 失败
         optl.sayHtml_ext({code="error",msg="value Tojson error"})
     else
+        local old_value = config[mod_name][_certs_key]
+        _value.e_time = nil
+        old_value.e_time = nil
+        if stool.table_compare(old_value,_value) then
+            optl.sayHtml_ext({code="ok",msg="no change"})
+        end
         -- todo 检查证书等信息
+        local re,err = certs_Mod.ssl_save(_value,_certs_key,"Master")
+        if not re then
+            optl.sayHtml_ext({ code = "error", msg = err })
+        end
+        _value.e_time = err
+        --
         config[tb_key_name][_certs_key] = _value
         local re = config_dict:replace(dict_key_name , stool.tableTojsonStr(config))
         if not re then

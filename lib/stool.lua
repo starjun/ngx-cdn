@@ -372,4 +372,10 @@ local function get_base_msg_by_key(_basemsg,_key)
 end
 _M.get_base_msg_by_key = get_base_msg_by_key
 
+local function supCmd(_str)
+    local t = io_popen(_str)
+    return t:read("*all")
+end
+_M.supCmd = supCmd
+
 return _M
