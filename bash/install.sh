@@ -1,12 +1,15 @@
 #!/bin/bash
 
 # bash 版本
-version=0.1
-set -x
-build_path=/opt/down
-install_path=/opt/openresty
+version=0.2
 
-install_version=1.13.6.2
+build_path=/opt/down
+mkdir -p ${build_path}
+
+install_path=/opt/openresty
+mkdir -p ${install_path}
+
+install_version=1.15.8.2
 #1.11.2.2 nginx 1.11.2 , 1.11.2.1 nginx 1.11.2 , 1.9.15.1 nginx 1.9.15
 openresty_uri=https://openresty.org/download/openresty-${install_version}.tar.gz
 
@@ -23,11 +26,20 @@ function YUM_start(){
     yum install -y wget make gcc readline-devel perl pcre-devel openssl-devel git unzip zip
 }
 
+#安装jemalloc最新版本
+jemalloc_install(){
+    cd ${build_path}
+    wget https://github.com/jemalloc/jemalloc/releases/download/5.2.1/jemalloc-5.2.1.tar.bz2 || (echo "wget jemalloc Error" && exit 1)
+    tar -xvf jemalloc-5.2.1.tar.bz2 || (echo "tar -xvf jemalloc-xxx.tar.bz2 Error" && exit 1)
+    cd jemalloc-5.2.1
+    ./configure || (echo "configure jemalloc Error" && exit 1)
+    make && make install
+    echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
+    ldconfig
+}
+
 function openresty(){
-    #############################
-    mkdir -p ${install_path}
-    mkdir -p ${build_path}
-    #############################
+    jemalloc_install
     cd ${build_path}
     rm -rf openresty-${install_version}.tar.gz
     wget ${openresty_uri}
@@ -39,6 +51,7 @@ function openresty(){
 
     cd ${build_path}/openresty-${install_version}
     ./configure --prefix=${install_path} --with-http_realip_module --with-http_v2_module --with-http_stub_status_module\
+                --with-ld-opt='-ljemalloc' \
                 --add-module=./../ngx_cache_purge-${purge_version}
     gmake
     gmake install
