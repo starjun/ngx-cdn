@@ -15,6 +15,11 @@ keys["fail_host"]    = {
     dict_tag = "fail_host_version",
     _version = 0
 }
+keys["host_Mod"]    = {
+    cache    = stool.stringTojson(config_dict:get("host_Mod")) or {},
+    dict_tag = "host_Mod_version",
+    _version = 0
+}
 
 local _M          = { _VERSION = "0.01" }
 _M.keys           = keys

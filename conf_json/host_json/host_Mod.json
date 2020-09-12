@@ -1,0 +1,22 @@
+{
+    "localhost":{
+        "state":"on",
+        "add_headers_Mod":"on",
+        "http2https_Mod":"on",
+        "limit_rate_Mod":"on",
+        "network_Mod":"on",
+        "proxy_cache_Mod":"on",
+        "app_Mod":"on",
+        "g_version": 1
+    },
+    "localhost5460":{
+        "state":"on",
+        "add_headers_Mod":"on",
+        "http2https_Mod":"on",
+        "limit_rate_Mod":"on",
+        "network_Mod":"on",
+        "proxy_cache_Mod":"on",
+        "app_Mod":"on",
+        "g_version": 0
+    }
+}

@@ -39,6 +39,27 @@ function loadConfig()
         ip_dict:safe_set(v , "deny" , 0)
     end
 
+    local tmp_host_Mod     = stool.loadjson(_basedir .. "host_json/host_Mod.json")
+    local all_host_Mod     = {}
+    for k , v in pairs(tmp_host_Mod) do
+        v.state     = v.state or "on"
+        v.add_headers_Mod  = v.add_headers_Mod or "on"
+        v.http2https_Mod = v.http2https_Mod or "on"
+        v.limit_rate_Mod  = v.limit_rate_Mod or "on"
+        v.proxy_cache_Mod = v.proxy_cache_Mod or "on"
+        v.app_Mod         = v.app_Mod or "on"
+        v.network_Mod     = v.network_Mod or "on"
+        v.rules     = stool.loadjson(_basedir .. "host_json/" .. k .. ".json")
+        v.rules.add_headers_Mod = v.rules.add_headers_Mod or {}
+        v.rules.limit_rate_Mod  = v.rules.limit_rate_Mod or {}
+        v.rules.proxy_cache_Mod = v.rules.proxy_cache_Mod or {}
+        v.rules.app_Mod         = v.rules.app_Mod or {}
+        v.rules.network_Mod     = v.rules.network_Mod or {}
+        all_host_Mod[k] = v
+    end
+    config_dict:safe_set("host_Mod" , stool.tableTojsonStr(all_host_Mod) , 0)
+    config_dict:safe_set("host_Mod_version" , 0 , 0)
+
     -- http2https_Mod
     config.http2https_Mod    = stool.loadjson(_basedir .. "http2https_Mod.json")
 

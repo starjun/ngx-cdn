@@ -1,7 +1,7 @@
 
 
 local _worker_count = ngx.worker.count()
-local _worker_id = ngx.worker.id()
+local _worker_id    = ngx.worker.id()
 
 local ngx_shared = ngx.shared
 local ipairs = ipairs
